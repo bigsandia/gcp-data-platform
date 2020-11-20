@@ -9,4 +9,4 @@ gcloud run deploy data-loader \
         --concurrency=1 \
         --max-instances=1 \
         --platform=managed \
-        --allow-unauthenticated
+        --no-allow-unauthenticated
