@@ -20,13 +20,10 @@ public class Main implements Callable {
 
   @Override
   public Object call() {
-
     port(8080);
-    path("/v1", () -> {
-      get("/table/:tableName/events", (req, res) -> {
-        System.out.println("received parameter tableName=" + req.params(":tableName"));
-        return "hello world";
-      });
+    post("/", (req, res) -> {
+      System.out.println("Req body=" + req.body());
+      return "hello world";
     });
 
     return 0;
