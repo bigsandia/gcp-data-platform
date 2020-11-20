@@ -1,6 +1,6 @@
 package org.dataplatform.dataloader;
 
-import java.io.IOException;
+import static spark.Spark.*;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
 import org.apache.logging.log4j.LogManager;
@@ -19,7 +19,16 @@ public class Main implements Callable {
   }
 
   @Override
-  public Object call() throws IOException {
+  public Object call() {
+
+    port(8080);
+    path("/v1", () -> {
+      get("/table/:tableName/events", (req, res) -> {
+        System.out.println("received parameter tableName=" + req.params(":tableName"));
+        return "hello world";
+      });
+    });
+
     return 0;
   }
 
