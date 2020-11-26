@@ -1,32 +1,27 @@
 package org.dataplatform.dataloader;
 
-import static spark.Spark.*;
-import java.util.Arrays;
-import java.util.concurrent.Callable;
+import static spark.Spark.port;
+import static spark.Spark.post;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
+import org.dataplatform.dataloader.input.InputMessage;
 
-@Command(name = "data-loader", mixinStandardHelpOptions = true, version = "")
-public class Main implements Callable {
+public class Main {
 
   private static final Logger LOGGER = LogManager.getLogger(Main.class);
 
   public static void main(String[] args) {
-    LOGGER.info("Parameters : {}", Arrays.toString(args));
-    new CommandLine(new Main()).execute(args);
-  }
-
-  @Override
-  public Object call() {
     port(8080);
-    post("/", (req, res) -> {
-      System.out.println("Req body=" + req.body());
-      return "hello world";
-    });
 
-    return 0;
+    post("/", (req, res) -> {
+      LOGGER.info("Req body=" + req.body());
+      InputMessage inputMessage = new ObjectMapper().readValue(req.body(), InputMessage.class);
+      new DataLoader(inputMessage).run();
+
+      return "OK";
+    });
   }
 
 }

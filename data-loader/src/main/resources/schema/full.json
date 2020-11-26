@@ -1,0 +1,17 @@
+{
+  "rawPath": ".*/test_full_.*",
+  "project": "another-data-platform",
+  "dataset": "test",
+  "table": "full",
+  "leadingRows": 0,
+  "delimiter": ",",
+  "charset": "UTF-8",
+  "ingestionType": "FULL",
+  "quote": "\"",
+  "columns": [
+    {
+      "name": "a",
+      "type": "STRING"
+    }
+  ]
+}
