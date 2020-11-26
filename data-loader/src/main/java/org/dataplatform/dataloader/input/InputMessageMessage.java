@@ -2,7 +2,7 @@ package org.dataplatform.dataloader.input;
 
 public class InputMessageMessage {
 
-  InputMessageAttributes AttributesObject;
+  InputMessageAttributes attributes;
   private String data;
   private String messageId;
   private String message_id;

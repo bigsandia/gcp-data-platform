@@ -50,7 +50,7 @@ public class DatasourceToField {
   }
 
   private static String adaptFieldTypeToFeatureLoading(Column column) {
-    if (column.columnWithDateConversion() && !column.getPattern().get().equals("yyyy-MM-dd")) {
+    if (column.columnWithDateConversion() && !column.getPattern().equals("yyyy-MM-dd")) {
       return "STRING";
     } else {
       return column.getType().toString();

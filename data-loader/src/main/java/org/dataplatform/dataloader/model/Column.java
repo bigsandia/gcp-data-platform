@@ -2,7 +2,6 @@ package org.dataplatform.dataloader.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class Column {
 
@@ -18,6 +17,9 @@ public class Column {
   private boolean referenceDate;
   private List<Column> subColumns;
 
+  public Column() {
+  }
+
   private Column(String name, ColumnType type,
       String description, String pattern, boolean primaryKey) {
     this.name = name;
@@ -31,24 +33,64 @@ public class Column {
     return name;
   }
 
+  public void setName(String name) {
+    this.name = name;
+  }
+
   public ColumnType getType() {
     return type;
+  }
+
+  public void setType(ColumnType type) {
+    this.type = type;
   }
 
   public ColumnMode getMode() {
     return mode;
   }
 
+  public void setMode(ColumnMode mode) {
+    this.mode = mode;
+  }
+
   public String getDescription() {
     return description;
   }
 
-  public Optional<String> getPattern() {
-    return Optional.ofNullable(pattern);
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public String getPattern() {
+    return pattern;
+  }
+
+  public void setPattern(String pattern) {
+    this.pattern = pattern;
   }
 
   public boolean isPrimaryKey() {
     return primaryKey;
+  }
+
+  public void setPrimaryKey(boolean primaryKey) {
+    this.primaryKey = primaryKey;
+  }
+
+  public boolean isHistorizedColumn() {
+    return historizedColumn;
+  }
+
+  public void setHistorizedColumn(boolean historizedColumn) {
+    this.historizedColumn = historizedColumn;
+  }
+
+  public boolean isReferenceDate() {
+    return referenceDate;
+  }
+
+  public void setReferenceDate(boolean referenceDate) {
+    this.referenceDate = referenceDate;
   }
 
   public boolean hasSubColumns() {
