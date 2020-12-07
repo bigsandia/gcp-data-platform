@@ -9,4 +9,6 @@ gcloud run deploy data-loader \
         --concurrency=1 \
         --max-instances=1 \
         --platform=managed \
-        --no-allow-unauthenticated
+        --no-allow-unauthenticated \
+        --set-env-vars DATA_LOCATION=US \
+        --service-account=data-loader-invoker@$_PROJECT.iam.gserviceaccount.com

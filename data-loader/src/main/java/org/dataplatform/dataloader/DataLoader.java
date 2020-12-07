@@ -23,6 +23,7 @@ public class DataLoader {
   }
 
   public void run() {
+    LOGGER.info("run...");
     DatasourceSchemasRetriever datasourceSchemasRetriever = new LocalDatasourceSchemasRetriever();
     BigQueryLoaderFactory bigQueryLoaderFactory = new BigQueryLoaderFactory();
 

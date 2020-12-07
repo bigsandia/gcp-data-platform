@@ -1,0 +1,17 @@
+{
+  "rawPath": ".*/test_add_.*",
+  "project": "another-data-platform",
+  "dataset": "test",
+  "table": "add",
+  "leadingRows": 0,
+  "delimiter": ",",
+  "charset": "UTF-8",
+  "ingestionType": "ADD",
+  "quote": "\"",
+  "columns": [
+    {
+      "name": "a",
+      "type": "STRING"
+    }
+  ]
+}
