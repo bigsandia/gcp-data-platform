@@ -18,6 +18,10 @@ public class Application {
                 .warn("DATA_LOCATION env var is not set. Should be set for example to US, EU, ...");
             System.exit(1);
         }
+        String configBucketName = System.getenv("CONFIG_BUCKET_NAME");
+        if (null == configBucketName) {
+            throw new IllegalArgumentException("Missing CONFIG_BUCKET_NAME env var");
+        }
 
         port(8080);
 
@@ -26,7 +30,9 @@ public class Application {
             InputMessage inputMessage = InputMessageUtils.fromJson(req.body());
             LOGGER.info("inputMessage.inputMessage.getMessage().getData()={}",
                 inputMessage.getMessage().getData());
-            new DataLoader(inputMessage).run();
+
+            DataLoaderConfig config = new DataLoaderConfig(configBucketName);
+            new DataLoader(config, inputMessage).run();
             return "OK";
         });
     }
