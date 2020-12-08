@@ -32,8 +32,14 @@ gcloud run services add-iam-policy-binding data-loader \
      --member=serviceAccount:data-loader-invoker@$PROJECT_ID.iam.gserviceaccount.com \
      --role=roles/run.invoker
 
+gcloud pubsub topics create data-loader-dead-letter-topic
+
 gcloud pubsub subscriptions create data-loader --topic $TOPIC_NAME \
+     --max-delivery-attempts=5 \
+     --dead-letter-topic=data-loader-dead-letter-topic \
      --push-endpoint=https://data-loader-s3k5ketwpa-ew.a.run.app/ \
      --push-auth-service-account=data-loader-invoker@$PROJECT_ID.iam.gserviceaccount.com
 
 # gcloud pubsub topics publish $TOPIC_NAME --message "JB + Ivan + Jojo = <3"
+
+gsutil mb gs://$PROJECT_ID-config

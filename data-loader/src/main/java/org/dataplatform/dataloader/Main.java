@@ -14,11 +14,17 @@ public class Main {
 
   public static void main(String[] args) {
     port(8080);
-
     post("/", (req, res) -> {
       LOGGER.info("Req body=" + req.body());
       InputMessage inputMessage = InputMessageUtils.fromJson(req.body());
-      new DataLoader(inputMessage).run();
+
+      String configBucketName = System.getenv("CONFIG_BUCKET_NAME");
+      if (configBucketName == null) {
+        throw new IllegalArgumentException("Missing CONFIG_BUCKET_NAME env var");
+      }
+
+      DataLoaderConfig config = new DataLoaderConfig(configBucketName);
+      new DataLoader(config, inputMessage).run();
 
       return "OK";
     });

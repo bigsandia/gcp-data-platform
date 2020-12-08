@@ -9,4 +9,5 @@ gcloud run deploy data-loader \
         --concurrency=1 \
         --max-instances=1 \
         --platform=managed \
-        --no-allow-unauthenticated
+        --no-allow-unauthenticated \
+        --set-env-vars=CONFIG_BUCKET_NAME=another-data-platform-config

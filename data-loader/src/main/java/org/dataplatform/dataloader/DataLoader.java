@@ -16,14 +16,18 @@ public class DataLoader {
 
   private static final Logger LOGGER = LogManager.getLogger(DataLoader.class);
 
+  private final DataLoaderConfig config;
   private final InputMessage inputMessage;
 
-  public DataLoader(InputMessage inputMessage) {
+  public DataLoader(DataLoaderConfig config, InputMessage inputMessage) {
     this.inputMessage = inputMessage;
+    this.config = config;
   }
 
   public void run() {
-    DatasourceSchemasRetriever datasourceSchemasRetriever = new LocalDatasourceSchemasRetriever();
+    DatasourceSchemasRetriever datasourceSchemasRetriever = new GCSDatasourceSchemasRetriever(
+        config.getConfigBucketName()
+    );
     BigQueryLoaderFactory bigQueryLoaderFactory = new BigQueryLoaderFactory();
 
     String messageData = inputMessage.getMessage().getData();
