@@ -25,6 +25,7 @@ public class DataLoader {
   }
 
   public void run() {
+    LOGGER.info("run...");
     DatasourceSchemasRetriever datasourceSchemasRetriever = new GCSDatasourceSchemasRetriever(
         config.getConfigBucketName()
     );

@@ -10,4 +10,5 @@ gcloud run deploy data-loader \
         --max-instances=1 \
         --platform=managed \
         --no-allow-unauthenticated \
-        --set-env-vars=CONFIG_BUCKET_NAME=another-data-platform-config
+        --set-env-vars DATA_LOCATION=US,CONFIG_BUCKET_NAME=another-data-platform-config \
+        --service-account=data-loader-invoker@$_PROJECT.iam.gserviceaccount.com

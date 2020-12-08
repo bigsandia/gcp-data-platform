@@ -53,7 +53,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>org.dataplatform.dataloader.Main</mainClass>
+              <mainClass>org.dataplatform.dataloader.Application</mainClass>
             </manifest>
           </archive>
         </configuration>
