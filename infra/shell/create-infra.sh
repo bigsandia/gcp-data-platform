@@ -30,6 +30,10 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
      --member=serviceAccount:data-loader-invoker@$PROJECT_ID.iam.gserviceaccount.com \
      --role=roles/bigquery.jobUser
 
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+     --member=serviceAccount:data-loader-invoker@$PROJECT_ID.iam.gserviceaccount.com \
+     --role=roles/storage.objectViewer
+
 gcloud run services add-iam-policy-binding data-loader \
      --platform=managed \
      --region=europe-west1 \
