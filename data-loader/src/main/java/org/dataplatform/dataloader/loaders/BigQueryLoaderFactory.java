@@ -15,6 +15,8 @@ public class BigQueryLoaderFactory {
   }
 
   public BigQueryLoader getLoader(IngestionType ingestionType) {
+    LOGGER.info("Ingestion type : {}", ingestionType);
+
     switch (ingestionType) {
       case FULL:
         return new BigQueryLoaderFull(bigQueryRepository);
