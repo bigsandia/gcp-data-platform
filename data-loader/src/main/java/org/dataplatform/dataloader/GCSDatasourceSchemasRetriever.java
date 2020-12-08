@@ -3,11 +3,12 @@ package org.dataplatform.dataloader;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.google.cloud.storage.contrib.nio.CloudStorageFileSystem;
+import com.google.api.gax.paging.Page;
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 import java.io.IOException;
-import java.nio.file.FileSystem;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,20 +32,18 @@ public class GCSDatasourceSchemasRetriever implements DatasourceSchemasRetriever
   public GCSDatasourceSchemasRetriever(String bucketName) {
     datasources = new HashMap<>();
 
-    try (FileSystem fs = CloudStorageFileSystem.forBucket(bucketName)) {
-      for (Path path : Files.newDirectoryStream(fs.getPath("/"))) {
-        try {
-          DatasourceSchema datasourceSchema = OBJECT_MAPPER
-              .readValue(path.toFile(), DatasourceSchema.class);
-          LOGGER.info("loading datasource {}", path.toFile().getName());
-          datasources.put(Pattern.compile(datasourceSchema.getRawPath()), datasourceSchema);
-        } catch (IOException e) {
-          LOGGER.error("error while loading datasource {}", path.toFile().getName());
-        }
+    Storage storage = StorageOptions.getDefaultInstance().getService();
+    Page<Blob> blobs = storage.list(bucketName);
+    for (Blob blob : blobs.iterateAll()) {
+      String blobContent = new String(blob.getContent(), StandardCharsets.UTF_8);
+      try {
+        DatasourceSchema datasourceSchema = OBJECT_MAPPER
+            .readValue(blobContent, DatasourceSchema.class);
+        LOGGER.info("loading datasource {}", blob.getName());
+        datasources.put(Pattern.compile(datasourceSchema.getRawPath()), datasourceSchema);
+      } catch (IOException e) {
+        LOGGER.error("error while loading datasource {}", blob.getName());
       }
-    } catch (IOException e) {
-      LOGGER.error("Error while reading from bucket {}", bucketName, e);
-      throw new IllegalStateException(e);
     }
   }
 
