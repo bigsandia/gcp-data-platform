@@ -16,24 +16,15 @@ public class DataLoader {
 
   private static final Logger LOGGER = LogManager.getLogger(DataLoader.class);
 
-  private final DataLoaderConfig config;
-  private final InputMessage inputMessage;
+  private DatasourceSchemasRetriever datasourceSchemasRetriever;
 
-  public DataLoader(DataLoaderConfig config, InputMessage inputMessage) {
-    this.inputMessage = inputMessage;
-    this.config = config;
+  public DataLoader( DatasourceSchemasRetriever datasourceSchemasRetriever) {
+    this.datasourceSchemasRetriever = datasourceSchemasRetriever;
   }
 
-  public void run() {
-    LOGGER.info("run...");
-    DatasourceSchemasRetriever datasourceSchemasRetriever = new GCSDatasourceSchemasRetriever(
-        config.getConfigBucketName()
-    );
+  public void run(Notification notification) {
     BigQueryLoaderFactory bigQueryLoaderFactory = new BigQueryLoaderFactory();
 
-    String messageData = inputMessage.getMessage().getData();
-    String notificationAsString = new String(Base64.getDecoder().decode(messageData));
-    Notification notification = new Gson().fromJson(notificationAsString, Notification.class);
     String filename = "gs://" + notification.get("bucket") + "/" + notification.get("name");
 
     LOGGER.info("Loading file {}", filename);
