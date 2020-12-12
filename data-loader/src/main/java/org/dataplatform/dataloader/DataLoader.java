@@ -22,10 +22,8 @@ public class DataLoader {
     this.datasourceSchemasRetriever = datasourceSchemasRetriever;
   }
 
-  public void run(Notification notification) {
+  public void load(String filename) {
     BigQueryLoaderFactory bigQueryLoaderFactory = new BigQueryLoaderFactory();
-
-    String filename = String.format("gs://%s/%s", notification.get("bucket"), notification.get("name"));
 
     LOGGER.info("Loading file {}", filename);
 
