@@ -9,7 +9,7 @@ import org.dataplatform.gcp.bigquery.BigQueryRepositoryImpl;
 
 public class BigQueryLoaderAdd implements BigQueryLoader {
 
-  public static Logger LOGGER = LogManager.getLogger();
+  public static Logger LOGGER = LogManager.getLogger(BigQueryLoaderAdd.class);
 
   @Override
   public void load(String filename, DatasourceSchema datasourceSchema)

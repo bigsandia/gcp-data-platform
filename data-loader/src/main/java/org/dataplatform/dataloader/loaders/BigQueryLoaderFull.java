@@ -12,7 +12,7 @@ import org.dataplatform.gcp.bigquery.BigQueryRepositoryImpl;
 
 public class BigQueryLoaderFull implements BigQueryLoader {
 
-  public static Logger LOGGER = LogManager.getLogger();
+  public static Logger LOGGER = LogManager.getLogger(BigQueryLoaderFull.class);
 
   @Override
   public void load(String filename, DatasourceSchema datasourceSchema)
@@ -34,7 +34,8 @@ public class BigQueryLoaderFull implements BigQueryLoader {
 
     // 2.5 - crée la table si elle n'existe pas
     if (bqRepo.tableExists(datasourceSchema.getTableId())) {
-      LOGGER.info("Table " + datasourceSchema.getFullTableName() + " already exists");
+      System.out.println("Table " + datasourceSchema.getFullTableName() + " already exists");
+      LOGGER.info("Table {} already exists", datasourceSchema.getFullTableName());
     } else {
       try {
         bqRepo
