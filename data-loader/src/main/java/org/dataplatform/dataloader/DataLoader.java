@@ -25,7 +25,7 @@ public class DataLoader {
   public void run(Notification notification) {
     BigQueryLoaderFactory bigQueryLoaderFactory = new BigQueryLoaderFactory();
 
-    String filename = "gs://" + notification.get("bucket") + "/" + notification.get("name");
+    String filename = String.format("gs://%s/%s", notification.get("bucket"), notification.get("name"));
 
     LOGGER.info("Loading file {}", filename);
 

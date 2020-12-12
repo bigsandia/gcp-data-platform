@@ -13,20 +13,12 @@ public class Application {
     private static final Logger LOGGER = LogManager.getLogger(Application.class);
 
     public static void main(String[] args) {
-        if (null == System.getenv("DATA_LOCATION")) {
-            LOGGER
-                    .warn("DATA_LOCATION env var is not set. Should be set for example to US, EU, ...");
-            System.exit(1);
-        }
-        String configBucketName = System.getenv("CONFIG_BUCKET_NAME");
-        if (null == configBucketName) {
-            throw new IllegalArgumentException("Missing CONFIG_BUCKET_NAME env var");
-        }
 
-        port(8080);
-        DataLoaderConfig config = new DataLoaderConfig(configBucketName);
+
+        DataLoaderConfig config = DataLoaderConfig.fromMap(System.getenv());
         GCSDatasourceSchemasRetriever datasourceSchemasRetriever = new GCSDatasourceSchemasRetriever(config.getConfigBucketName());
 
+        port(8080);
         post("/", (req, res) -> {
             LOGGER.info("Req body={}", req.body());
 
