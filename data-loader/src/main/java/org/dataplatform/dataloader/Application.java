@@ -32,12 +32,15 @@ public class Application {
     });
 
     post("/manual", (req, res) -> {
-          LOGGER.info("Receiving manual event from Req body={}", req.body());
-          String filename = req.body();
-          new DataLoader(datasourceSchemasRetriever).load(filename);
-          return "OK";
-        }
-    );
+      try {
+        LOGGER.info("Receiving manual event from Req body={}", req.body());
+        String filename = req.body();
+        new DataLoader(datasourceSchemasRetriever).load(filename);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      return "OK";
+    });
   }
 
 }

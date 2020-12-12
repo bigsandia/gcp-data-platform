@@ -9,9 +9,11 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.dataplatform.dataloader.model.DatasourceSchema;
@@ -49,12 +51,21 @@ public class GCSDatasourceSchemasRetriever implements DatasourceSchemasRetriever
 
   @Override
   public List<DatasourceSchema> findCorrespondingSchemas(String inputFileNameOnGcs) {
-    return datasources.entrySet()
-        .stream()
-        .filter(patternAndDatasource ->
-            patternAndDatasource.getKey().matcher(inputFileNameOnGcs).find())
-        .map(Map.Entry::getValue)
-        .collect(Collectors.toList());
+    LOGGER.debug("Looking for DatasourceSchema for {}", inputFileNameOnGcs);
+    List<DatasourceSchema> datasourceSchemaList = null;
+    try {
+      datasourceSchemaList = datasources.entrySet()
+          .stream()
+          .filter(patternAndDatasource ->
+              patternAndDatasource.getKey().matcher(inputFileNameOnGcs).find())
+          .map(Entry::getValue)
+          .collect(Collectors.toList());
+      LOGGER.debug("Found {} DatasourceSchema for {}", datasourceSchemaList.size(), inputFileNameOnGcs);
+    } catch (Exception e) {
+      LOGGER.error("Error when looking for DatasourceSchema for " + inputFileNameOnGcs, e);
+      return List.of();
+    }
+    return datasourceSchemaList;
   }
 
 }
