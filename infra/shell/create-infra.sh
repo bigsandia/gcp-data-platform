@@ -34,6 +34,10 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
      --member=serviceAccount:data-loader-invoker@$PROJECT_ID.iam.gserviceaccount.com \
      --role=roles/storage.objectViewer
 
+gcloud projects add-iam-policy-binding another-data-platform \
+     --member=serviceAccount:data-loader-invoker@another-data-platform.iam.gserviceaccount.com \
+     --role=roles/bigquery.dataEditor
+
 gcloud run services add-iam-policy-binding data-loader \
      --platform=managed \
      --region=europe-west1 \
