@@ -1,34 +1,35 @@
 package org.dataplatform.dataloader;
 
-import com.google.api.services.storage.model.Notification;
-import com.google.gson.Gson;
-import java.util.Base64;
-import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.dataplatform.dataloader.input.InputMessage;
 import org.dataplatform.dataloader.loaders.BigQueryLoader;
 import org.dataplatform.dataloader.loaders.BigQueryLoaderException;
 import org.dataplatform.dataloader.loaders.BigQueryLoaderFactory;
 import org.dataplatform.dataloader.model.DatasourceSchema;
+import org.dataplatform.gcp.bigquery.BigQueryRepository;
+
+import java.util.List;
 
 public class DataLoader {
 
   private static final Logger LOGGER = LogManager.getLogger(DataLoader.class);
 
   private DatasourceSchemasRetriever datasourceSchemasRetriever;
+  private final BigQueryLoaderFactory bigQueryLoaderFactory;
 
-  public DataLoader( DatasourceSchemasRetriever datasourceSchemasRetriever) {
+  public DataLoader(
+      DatasourceSchemasRetriever datasourceSchemasRetriever,
+      BigQueryRepository bigQueryRepository) {
     this.datasourceSchemasRetriever = datasourceSchemasRetriever;
+    bigQueryLoaderFactory = new BigQueryLoaderFactory(bigQueryRepository);
   }
 
   public void load(String filename) {
-    BigQueryLoaderFactory bigQueryLoaderFactory = new BigQueryLoaderFactory();
 
     LOGGER.info("Loading file {}", filename);
 
-    List<DatasourceSchema> datasourceSchemas = datasourceSchemasRetriever
-        .findCorrespondingSchemas(filename);
+    List<DatasourceSchema> datasourceSchemas =
+        datasourceSchemasRetriever.findCorrespondingSchemas(filename);
 
     for (DatasourceSchema schema : datasourceSchemas) {
       BigQueryLoader loader = bigQueryLoaderFactory.getLoader(schema.getIngestionType());
@@ -39,5 +40,4 @@ public class DataLoader {
       }
     }
   }
-
 }

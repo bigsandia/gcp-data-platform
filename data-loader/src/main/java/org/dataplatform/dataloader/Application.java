@@ -4,6 +4,8 @@ import com.google.api.services.storage.model.Notification;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.dataplatform.dataloader.input.InputMessageConverter;
+import org.dataplatform.gcp.bigquery.BigQueryRepository;
+import org.dataplatform.gcp.bigquery.BigQueryRepositoryImpl;
 
 import static spark.Spark.port;
 import static spark.Spark.post;
@@ -17,6 +19,8 @@ public class Application {
     DataLoaderConfig config = DataLoaderConfig.fromMap(System.getenv());
     GCSDatasourceSchemasRetriever datasourceSchemasRetriever = new GCSDatasourceSchemasRetriever(
         config.getConfigBucketName());
+    BigQueryRepository bigQueryRepository = new BigQueryRepositoryImpl();
+    DataLoader dataLoader = new DataLoader(datasourceSchemasRetriever, bigQueryRepository);
 
     port(8080);
     post("/", (req, res) -> {
@@ -27,7 +31,7 @@ public class Application {
 
       String filename = String
           .format("gs://%s/%s", notification.get("bucket"), notification.get("name"));
-      new DataLoader(datasourceSchemasRetriever).load(filename);
+      dataLoader.load(filename);
       return "OK";
     });
 
@@ -35,7 +39,7 @@ public class Application {
       try {
         LOGGER.info("Receiving manual event from Req body={}", req.body());
         String filename = req.body();
-        new DataLoader(datasourceSchemasRetriever).load(filename);
+        dataLoader.load(filename);
       } catch (Exception e) {
         e.printStackTrace();
       }

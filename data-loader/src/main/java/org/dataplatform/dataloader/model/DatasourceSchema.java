@@ -4,11 +4,12 @@ import com.google.cloud.bigquery.TableId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class DatasourceSchema {
 
-  private HashMap<String, String> labels;
+  private Map<String, String> labels;
   private String rawPath;
   private String project;
   private String dataset;
@@ -22,7 +23,7 @@ public class DatasourceSchema {
   private List<Column> columns = new ArrayList<>();
   private boolean allowQuotedNewlines;
 
-  public HashMap<String, String> getLabels() {
+  public Map<String, String> getLabels() {
     return labels;
   }
 

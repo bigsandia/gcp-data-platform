@@ -11,22 +11,27 @@ public class BigQueryLoaderAdd implements BigQueryLoader {
 
   public static Logger LOGGER = LogManager.getLogger(BigQueryLoaderAdd.class);
 
+  private final BigQueryRepository bigQueryRepository;
+
+  public BigQueryLoaderAdd(BigQueryRepository bigQueryRepository) {
+    this.bigQueryRepository = bigQueryRepository;
+  }
+
   @Override
   public void load(String filename, DatasourceSchema datasourceSchema)
       throws BigQueryLoaderException {
-    BigQueryRepository bqRepo = new BigQueryRepositoryImpl();
 
     // 1- charger dans une table temporaire
     GcsFileToBqTableLoader gcsFileToBqTableLoader = new GcsFileToBqTableLoader(
-        bqRepo, filename, datasourceSchema);
+        bigQueryRepository, filename, datasourceSchema);
     gcsFileToBqTableLoader.load();
 
     // 2- crée la table si elle n'existe pas
-    if (bqRepo.tableExists(datasourceSchema.getTableId())) {
+    if (bigQueryRepository.tableExists(datasourceSchema.getTableId())) {
       LOGGER.info("Table " + datasourceSchema.getFullTableName() + " already exists");
     } else {
       try {
-        bqRepo
+        bigQueryRepository
             .runDDLQuery("CREATE TABLE " + datasourceSchema.getFullTableName() + " AS "
                 + "SELECT *, CURRENT_DATETIME() AS load_date_time FROM " + datasourceSchema
                 .getFullTableTmpName() + " LIMIT 0");
@@ -38,7 +43,7 @@ public class BigQueryLoaderAdd implements BigQueryLoader {
 
     // 3- déverse tout la table cible avec le champ load date time
     try {
-      bqRepo.runDDLQuery("INSERT INTO `" + datasourceSchema.getFullTableName() + "` "
+      bigQueryRepository.runDDLQuery("INSERT INTO `" + datasourceSchema.getFullTableName() + "` "
           + "SELECT *, CURRENT_DATETIME() AS load_date_time FROM `" + datasourceSchema
           .getFullTableTmpName() + "`");
     } catch (Exception e) {
@@ -48,6 +53,6 @@ public class BigQueryLoaderAdd implements BigQueryLoader {
     }
 
     // 4- drop la table temporaire
-    bqRepo.dropTable(datasourceSchema.getTmpTableId());
+    bigQueryRepository.dropTable(datasourceSchema.getTmpTableId());
   }
 }
