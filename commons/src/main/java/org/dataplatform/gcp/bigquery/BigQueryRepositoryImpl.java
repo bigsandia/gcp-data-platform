@@ -19,11 +19,11 @@ public class BigQueryRepositoryImpl implements BigQueryRepository {
 
   private static final Logger LOGGER = LogManager.getLogger(BigQueryRepositoryImpl.class);
 
-  private static final String DATA_LOCATION = System.getenv("DATA_LOCATION");
-
   private final BigQuery bigQuery;
+  private final String dataLocation;
 
-  public BigQueryRepositoryImpl() {
+  public BigQueryRepositoryImpl(String dataLocation) {
+    this.dataLocation = dataLocation;
     bigQuery = BigQueryOptions.newBuilder()
         .build().getService();
   }
@@ -63,7 +63,7 @@ public class BigQueryRepositoryImpl implements BigQueryRepository {
     try {
       String jobName = jobNamePrefix + "-" + UUID.randomUUID().toString();
 
-      JobId jobId = JobId.newBuilder().setJob(jobName).setLocation(DATA_LOCATION).build();
+      JobId jobId = JobId.newBuilder().setJob(jobName).setLocation(dataLocation).build();
 
       Job job = bigQuery.create(JobInfo.of(jobId, jobConfiguration));
 

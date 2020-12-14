@@ -17,11 +17,10 @@ public class Column {
   private boolean referenceDate;
   private List<Column> subColumns;
 
-  public Column() {
-  }
+  public Column() {}
 
-  private Column(String name, ColumnType type,
-      String description, String pattern, boolean primaryKey) {
+  public Column(
+      String name, ColumnType type, String description, String pattern, boolean primaryKey) {
     this.name = name;
     this.type = type;
     this.description = description;
@@ -107,5 +106,4 @@ public class Column {
   public boolean columnWithDateConversion() {
     return pattern != null && !pattern.isEmpty() && type.equals(ColumnType.DATE);
   }
-
 }
