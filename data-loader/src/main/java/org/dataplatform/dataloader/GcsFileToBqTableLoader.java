@@ -10,6 +10,7 @@ import com.google.cloud.bigquery.LoadJobConfiguration.Builder;
 import com.google.cloud.bigquery.Schema;
 import com.google.cloud.bigquery.TableId;
 import java.util.List;
+import org.dataplatform.dataloader.loaders.DatasourceToField;
 import org.dataplatform.dataloader.model.DatasourceSchema;
 import org.dataplatform.gcp.bigquery.BigQueryRepository;
 
