@@ -1,0 +1,24 @@
+{
+  "rawPath": ".*overwrite/.*\\.csv",
+  "project": "another-data-platform",
+  "dataset": "test",
+  "table": "overwrite",
+  "leadingRows": 1,
+  "delimiter": ",",
+  "charset": "UTF-8",
+  "ingestionType": "FULL",
+  "columns": [
+    {
+      "name": "ID",
+      "type": "INTEGER"
+    },
+    {
+      "name": "name",
+      "type": "STRING"
+    },
+    {
+      "name": "birthdate",
+      "type": "DATE"
+    }
+  ]
+}

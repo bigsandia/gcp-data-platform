@@ -1,0 +1,25 @@
+{
+  "rawPath": ".*delta/.*\\.csv",
+  "project": "another-data-platform",
+  "dataset": "test",
+  "table": "delta",
+  "leadingRows": 1,
+  "delimiter": ",",
+  "charset": "UTF-8",
+  "ingestionType": "DELTA",
+  "columns": [
+    {
+      "name": "ID",
+      "type": "INTEGER",
+      "primaryKey": true
+    },
+    {
+      "name": "name",
+      "type": "STRING"
+    },
+    {
+      "name": "birthdate",
+      "type": "DATE"
+    }
+  ]
+}
