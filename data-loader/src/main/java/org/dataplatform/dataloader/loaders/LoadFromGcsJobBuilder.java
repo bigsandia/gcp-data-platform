@@ -8,7 +8,6 @@ import com.google.cloud.bigquery.LoadJobConfiguration;
 import com.google.cloud.bigquery.Schema;
 import com.google.cloud.bigquery.TableId;
 import java.util.List;
-import org.dataplatform.dataloader.DatasourceToField;
 import org.dataplatform.dataloader.model.DatasourceSchema;
 
 public class LoadFromGcsJobBuilder {
@@ -36,7 +35,7 @@ public class LoadFromGcsJobBuilder {
   }
 
   public LoadJobConfiguration build() {
-    List<Field> fields = DatasourceToField.buildFields(datasourceSchema.getColumns(), false);
+    List<Field> fields = DatasourceToField.buildFields(datasourceSchema.getColumns(), true);
 
     LoadJobConfiguration.Builder builder =
         LoadJobConfiguration.builder(destinationTable, sourceUri)

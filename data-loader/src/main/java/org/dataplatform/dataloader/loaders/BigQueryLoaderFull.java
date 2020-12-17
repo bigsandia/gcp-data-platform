@@ -23,6 +23,10 @@ public class BigQueryLoaderFull implements BigQueryLoader {
               .build();
 
       bigQueryRepository.runJob(loadJobConfiguration, "data-loader-full-ingestion");
+      bigQueryRepository.runDDLQuery(
+          String.format(
+              "UPDATE %s SET load_date_time = CURRENT_DATETIME() WHERE 1=1",
+              datasourceSchema.getFullTableName()));
     } catch (Exception e) {
       throw new BigQueryLoaderException(
           "Cannot load file " + filename + " into " + datasourceSchema.getFullTableName(), e);

@@ -1,4 +1,4 @@
-package org.dataplatform.dataloader;
+package org.dataplatform.dataloader.loaders;
 
 import com.google.cloud.bigquery.Field;
 import com.google.cloud.bigquery.FieldList;
