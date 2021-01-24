@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Optional;
 
 public class DatasourceSchema {
 
@@ -128,10 +128,9 @@ public class DatasourceSchema {
   }
 
   public String getFullTableName() {
-    return String.format("%s.%s.%s",
-        this.project,
-        this.dataset,
-        this.table);
+    return Optional.ofNullable(project)
+        .map(p->String.format("%s.%s.%s", this.project, this.dataset, this.table))
+        .orElse(String.format("%s.%s",this.dataset, this.table));
   }
 
   public String getFullTableTmpName() {
@@ -139,18 +138,16 @@ public class DatasourceSchema {
   }
 
   public TableId getTableId() {
-    return TableId.of(
-        this.project,
-        this.dataset,
-        this.table);
+    return tableId(this.project, this.dataset, this.table);
   }
 
   public TableId getTmpTableId() {
-    return TableId.of(
-        this.project,
-        this.dataset,
-        this.table + "_tmp");
+    return tableId(this.project, this.dataset, this.table + "_tmp");
   }
 
-
+  private TableId tableId(String project, String dataset, String table) {
+    return Optional.ofNullable(project)
+        .map(p -> TableId.of(p, dataset, table))
+        .orElse(TableId.of(dataset, table));
+  }
 }

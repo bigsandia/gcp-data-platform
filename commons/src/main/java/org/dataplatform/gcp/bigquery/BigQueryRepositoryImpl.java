@@ -71,10 +71,8 @@ public class BigQueryRepositoryImpl implements BigQueryRepository {
           RetryOption.initialRetryDelay(Duration.ofSeconds(1)),
           RetryOption.totalTimeout(Duration.ofMinutes(3)));
       if (completedJob != null && completedJob.getStatus().getError() == null) {
-        String project = jobConfiguration.getDestinationTable().getProject();
-        String tableName = jobConfiguration.getDestinationTable().getTable();
-        String dataset = jobConfiguration.getDestinationTable().getDataset();
-        LOGGER.info("Successfully create table {}:{}.{} ", project, dataset, tableName);
+
+        LOGGER.info("Successfully create table {}", jobConfiguration.getDestinationTable());
       } else {
         if (completedJob != null) {
           throw new IllegalStateException("job error : " +

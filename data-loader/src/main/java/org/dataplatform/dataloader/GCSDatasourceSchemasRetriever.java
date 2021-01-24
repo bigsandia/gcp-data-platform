@@ -1,21 +1,16 @@
 package org.dataplatform.dataloader;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.api.gax.paging.Page;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.dataplatform.dataloader.common.JsonParser;
 import org.dataplatform.dataloader.model.DatasourceSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +20,6 @@ public class GCSDatasourceSchemasRetriever implements DatasourceSchemasRetriever
   private static final Logger LOGGER = LoggerFactory
       .getLogger(GCSDatasourceSchemasRetriever.class);
 
-  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
-      .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-      .registerModule(new JavaTimeModule());
-
   private final Map<Pattern, DatasourceSchema> datasources;
 
   public GCSDatasourceSchemasRetriever(String bucketName) {
@@ -37,13 +28,11 @@ public class GCSDatasourceSchemasRetriever implements DatasourceSchemasRetriever
     Storage storage = StorageOptions.getDefaultInstance().getService();
     Page<Blob> blobs = storage.list(bucketName);
     for (Blob blob : blobs.iterateAll()) {
-      String blobContent = new String(blob.getContent(), StandardCharsets.UTF_8);
       try {
-        DatasourceSchema datasourceSchema = OBJECT_MAPPER
-            .readValue(blobContent, DatasourceSchema.class);
+        DatasourceSchema datasourceSchema = JsonParser.parseDatasourceSchema(blob.getContent());
         LOGGER.info("loading datasource {}", blob.getName());
         datasources.put(Pattern.compile(datasourceSchema.getRawPath()), datasourceSchema);
-      } catch (IOException e) {
+      } catch (RuntimeException e) {
         LOGGER.error("error while loading datasource {}", blob.getName());
       }
     }
