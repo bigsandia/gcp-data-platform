@@ -20,18 +20,18 @@ public class BigQueryLoaderDelta implements BigQueryLoader {
   }
 
   @Override
-  public void load(String filename, DatasourceSchema datasourceSchema)
+  public void load(String filepath, DatasourceSchema datasourceSchema)
       throws BigQueryLoaderException {
 
     if (!bigQueryRepository.tableExists(datasourceSchema.getTableId())) {
       LOGGER.info("Table not exists start a full loading");
-      new BigQueryLoaderFull(bigQueryRepository).load(filename, datasourceSchema);
+      new BigQueryLoaderFull(bigQueryRepository).load(filepath, datasourceSchema);
     } else {
       TableId temporaryTable = datasourceSchema.getTmpTableId();
       LoadJobConfiguration loadJobConfiguration =
           LoadFromGcsJobBuilder.createLoadJobFromSchema(datasourceSchema)
               .withDestinationTable(temporaryTable)
-              .withSourceUri(filename)
+              .withSourceUri(filepath)
               .build();
       bigQueryRepository.runJob(loadJobConfiguration, "data-loader-delta-ingestion");
 
