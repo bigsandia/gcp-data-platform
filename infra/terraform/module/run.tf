@@ -12,8 +12,7 @@ resource "google_cloud_run_service" "data_loader" {
 
     spec {
       containers {
-        // TODO : replace eu.gcr.io/another-data-platform with official image
-        image = "eu.gcr.io/another-data-platform/run/data-loader:${var.data_loader_image_version}"
+        image = var.data_loader_image
         env {
           name = "CONFIG_BUCKET_NAME"
           value = google_storage_bucket.data_loader_configuration.name

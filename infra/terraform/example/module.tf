@@ -9,5 +9,5 @@ module "gcp-data-platform" {
   ]
 
   location = "US"
-  data_loader_image_version = "685d104"
+  data_loader_image = "eu.gcr.io/another-data-platform/run/data-loader:685d104"
 }

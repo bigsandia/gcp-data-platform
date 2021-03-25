@@ -6,9 +6,8 @@ variable "cloud_run_region" {
   type = string
 }
 
-variable "data_loader_image_version" {
+variable "data_loader_image" {
   type = string
-  default = "latest"
 }
 
 variable "raw_data_buckets" {
