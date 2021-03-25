@@ -1,6 +1,6 @@
 resource "google_pubsub_topic" "raw_data_buckets_notifications" {
   project = var.project_id
-  name = "raw-data-buckets-notifications"
+  name = "data-loader-raw-data-buckets-notifications"
 
   depends_on = [
     google_project_service.pubsub]
