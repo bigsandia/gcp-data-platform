@@ -1,12 +1,10 @@
 substitutions:
-  # Default values
-  _ARTIFACT_NAME: 'data-loader'
   _PROJECT: another-data-platform
 
 steps:
 
   - name: gcr.io/cloud-builders/docker
-    args: ['build', '-t', 'eu.gcr.io/${_PROJECT}/run/${_ARTIFACT_NAME}:$SHORT_SHA', '.']
+    args: [ 'build', '-t', 'eu.gcr.io/${_PROJECT}/run/data-loader:$SHORT_SHA', '--build-arg', 'module=data-loader', '.' ]
 
   - name: gcr.io/cloud-builders/docker
-    args: ['push', 'eu.gcr.io/${_PROJECT}/run/${_ARTIFACT_NAME}:$SHORT_SHA']
+    args: [ 'push', 'eu.gcr.io/${_PROJECT}/run/data-loader:$SHORT_SHA' ]
