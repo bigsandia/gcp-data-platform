@@ -14,6 +14,10 @@ variable "raw_data_buckets" {
   type = set(string)
 }
 
+variable "raw_data_buckets_projects" {
+  type = set(string)
+}
+
 variable "location" {
   type = string
   default = "US"

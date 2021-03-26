@@ -4,3 +4,9 @@ resource "google_storage_bucket" "data_loader_configuration" {
 
   location = var.location
 }
+
+resource "google_storage_bucket_iam_member" "data_loader_configuration_object_viewer" {
+  bucket = google_storage_bucket.data_loader_configuration.name
+  role = "roles/storage.objectViewer"
+  member = "serviceAccount:${google_service_account.data_loader.email}"
+}

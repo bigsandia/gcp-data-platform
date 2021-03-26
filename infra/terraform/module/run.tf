@@ -6,6 +6,7 @@ resource "google_cloud_run_service" "data_loader" {
   template {
     metadata {
       annotations = {
+        "run.googleapis.com/sandbox" = "gvisor"
         "autoscaling.knative.dev/maxScale" = "1"
       }
     }
@@ -34,7 +35,4 @@ resource "google_cloud_run_service" "data_loader" {
   }
 
   autogenerate_revision_name = true
-
-  depends_on = [
-    google_project_service.cloud_run]
 }

@@ -1,17 +1,11 @@
 resource "google_pubsub_topic" "raw_data_buckets_notifications" {
   project = var.project_id
   name = "data-loader-raw-data-buckets-notifications"
-
-  depends_on = [
-    google_project_service.pubsub]
 }
 
 resource "google_pubsub_topic" "data_loader_dead_letter" {
   project = var.project_id
   name = "data-loader-dead-letter-topic"
-
-  depends_on = [
-    google_project_service.pubsub]
 }
 
 resource "google_pubsub_subscription" "data_loader_push" {
@@ -30,7 +24,4 @@ resource "google_pubsub_subscription" "data_loader_push" {
     dead_letter_topic = google_pubsub_topic.data_loader_dead_letter.id
     max_delivery_attempts = 5
   }
-
-  depends_on = [
-    google_project_service.pubsub]
 }

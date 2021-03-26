@@ -7,6 +7,9 @@ module "gcp-data-platform" {
     "bigsandia-17956e-raw-data-1",
     "bigsandia-17956e-raw-data-2"
   ]
+  raw_data_buckets_projects = [
+    "bigsandia-17956e"
+  ]
 
   location = "US"
   data_loader_image = "eu.gcr.io/another-data-platform/run/data-loader:685d104"
