@@ -24,7 +24,7 @@ public class DataLoader {
     bigQueryLoaderFactory = new BigQueryLoaderFactory(bigQueryRepository);
   }
 
-  public void load(String filename) {
+  public void load(String filename) throws BigQueryLoaderException {
 
     LOGGER.info("Loading file {}", filename);
 
@@ -33,11 +33,7 @@ public class DataLoader {
 
     for (DatasourceSchema schema : datasourceSchemas) {
       BigQueryLoader loader = bigQueryLoaderFactory.getLoader(schema.getIngestionType());
-      try {
-        loader.load(filename, schema);
-      } catch (BigQueryLoaderException e) {
-        LOGGER.error(e.getMessage(), e);
-      }
+      loader.load(filename, schema);
     }
   }
 }
