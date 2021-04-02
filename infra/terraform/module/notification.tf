@@ -1,10 +1,3 @@
-resource "google_pubsub_topic_iam_member" "enable_notifications" {
-  project = var.project_id
-  topic = google_pubsub_topic.raw_data_buckets_notifications.name
-  role = "roles/pubsub.publisher"
-  member = "serviceAccount:service-${data.google_project.current_project.number}@gs-project-accounts.iam.gserviceaccount.com"
-}
-
 data "google_project" "raw_data_project" {
   for_each = var.raw_data_buckets_projects
 
@@ -30,5 +23,5 @@ resource "google_storage_notification" "raw_data_buckets_notifications" {
     "OBJECT_FINALIZE"]
 
   depends_on = [
-    google_pubsub_topic_iam_member.enable_notifications]
+    google_pubsub_topic_iam_member.enable_notifications_from_raw_data_projects]
 }
