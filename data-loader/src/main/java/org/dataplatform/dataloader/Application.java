@@ -23,11 +23,6 @@ public class Application {
     BigQueryRepository bigQueryRepository = new BigQueryRepositoryImpl(config.getDataLocation());
     DataLoader dataLoader = new DataLoader(datasourceSchemasRetriever, bigQueryRepository);
 
-    port(8080);
-    post(
-        "/",
-        (req, res) -> {
-          try {
             LOGGER.info("Receiving event from bucket Req body={}", req.body());
 
             Notification notification = InputMessageConverter.extractNotificationMessage(req.body());
