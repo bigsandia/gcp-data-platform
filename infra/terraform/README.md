@@ -1,6 +1,6 @@
 # Prérequis
 
-Doit être activée :
+## APIs à activer
 
 - Cloud Resource Manager
   API : https://console.cloud.google.com/marketplace/product/google/cloudresourcemanager.googleapis.com
@@ -10,7 +10,7 @@ Doit être activée :
 - Cloud Run
 - Storage
 
-Rôle de la personne utilisant le module :
+## Rôle de la personne utilisant le module
 
 - Editor
 - Project IAM Admin
@@ -33,3 +33,10 @@ https://cloud.google.com/storage/docs/getting-service-agent#console
 Console Storage > Settings > le service account apparaît
 
 On doit l'activer pour tous les projets qui contiennent la donnée brute.
+
+## IAM pour data-loader
+
+Le service account data-loader doit avoir les droits suivants :
+
+- storage viewer sur les buckets sources
+- bigquery admin sur le projet BQ destination
