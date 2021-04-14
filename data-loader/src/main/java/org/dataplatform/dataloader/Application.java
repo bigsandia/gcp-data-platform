@@ -17,11 +17,16 @@ public class Application {
 
   public static void main(String[] args) {
 
-    DataLoaderConfig config = DataLoaderConfig.fromMap(System.getenv());
-    GCSDatasourceSchemasRetriever datasourceSchemasRetriever =
-        new GCSDatasourceSchemasRetriever(config.getConfigBucketName());
-    BigQueryRepository bigQueryRepository = new BigQueryRepositoryImpl(config.getDataLocation());
-    DataLoader dataLoader = new DataLoader(datasourceSchemasRetriever, bigQueryRepository);
+    port(8080);
+    post(
+        "/",
+        (req, res) -> {
+          try {
+            DataLoaderConfig config = DataLoaderConfig.fromMap(System.getenv());
+            GCSDatasourceSchemasRetriever datasourceSchemasRetriever =
+                new GCSDatasourceSchemasRetriever(config.getConfigBucketName());
+            BigQueryRepository bigQueryRepository = new BigQueryRepositoryImpl(config.getDataLocation());
+            DataLoader dataLoader = new DataLoader(datasourceSchemasRetriever, bigQueryRepository);
 
             LOGGER.info("Receiving event from bucket Req body={}", req.body());
 
@@ -42,6 +47,12 @@ public class Application {
         "/manual",
         (req, res) -> {
           try {
+            DataLoaderConfig config = DataLoaderConfig.fromMap(System.getenv());
+            GCSDatasourceSchemasRetriever datasourceSchemasRetriever =
+                new GCSDatasourceSchemasRetriever(config.getConfigBucketName());
+            BigQueryRepository bigQueryRepository = new BigQueryRepositoryImpl(config.getDataLocation());
+            DataLoader dataLoader = new DataLoader(datasourceSchemasRetriever, bigQueryRepository);
+
             LOGGER.info("Receiving manual event from Req body={}", req.body());
             String filename = req.body();
             dataLoader.load(filename);
