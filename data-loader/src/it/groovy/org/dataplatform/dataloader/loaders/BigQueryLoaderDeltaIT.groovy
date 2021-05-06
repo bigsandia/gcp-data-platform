@@ -1,6 +1,11 @@
 package org.dataplatform.dataloader.loaders
 
-
+import com.google.cloud.storage.Blob
+import com.google.cloud.storage.Bucket
+import com.google.cloud.storage.BucketInfo
+import com.google.cloud.storage.Storage
+import com.google.cloud.storage.StorageClass
+import com.google.cloud.storage.StorageOptions
 import org.dataplatform.dataloader.common.JsonParser
 import org.dataplatform.dataloader.model.DatasourceSchema
 import org.dataplatform.dataloader.test.tools.BigqueryTesting
@@ -10,17 +15,41 @@ import spock.lang.Specification
 
 class BigQueryLoaderDeltaIT extends Specification implements BigqueryTesting, CloudStorageTesting {
 
-    static String TEST_RAW_BUCKET = "test-it-raw-bucket-a23bc"
-    private BigQueryLoaderDelta bigQueryLoaderDelta
+    static String TEST_RAW_BUCKET = UUID.randomUUID().toString()
+    static BigQueryLoaderDelta bigQueryLoaderDelta
 
-    void setup() {
+    void createBucket() {
+        Storage storage = StorageOptions.newBuilder().setProjectId(System.getenv("GOOGLE_CLOUD_PROJECT")).build().getService();
+        storage.create(
+                BucketInfo.newBuilder(TEST_RAW_BUCKET)
+                        .setStorageClass(StorageClass.STANDARD)
+                        .setLocation("EU")
+                        .build());
+    }
+
+    void deleteBucket() {
+        Storage storage = StorageOptions.newBuilder().setProjectId(System.getenv("GOOGLE_CLOUD_PROJECT")).build().getService();
+        storage.list(TEST_RAW_BUCKET).iterateAll().forEach { Blob blob ->
+            blob.delete()
+        }
+        storage.get(TEST_RAW_BUCKET).delete()
+    }
+
+    void setupSpec() {
+        createBucket()
         bigQueryLoaderDelta = new BigQueryLoaderDelta(new BigQueryRepositoryImpl("EU"))
+    }
+
+    void cleanupSpec() {
+        deleteBucket()
     }
 
     def "Delta loader should create the table when not already exist and update table based on primary key"() {
         given:
         def datasourceSchema = retrieveDatasourceSchema("ingestion-case/delta/conf-delta.json")
+        createDatasetIfNoExists(datasourceSchema.getDataset())
         deleteTableIfExist(datasourceSchema.getTableId())
+
         when:
         bigQueryLoaderDelta.load(
                 fileIsCopiedIntoBucket("ingestion-case/delta/raw-data/delta_1.csv", TEST_RAW_BUCKET),

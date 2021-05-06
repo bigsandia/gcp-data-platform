@@ -170,9 +170,6 @@
           </execution>
         </executions>
         <configuration>
-          <environmentVariables>
-            <GOOGLE_CLOUD_PROJECT>another-data-platform</GOOGLE_CLOUD_PROJECT>
-          </environmentVariables>
           <testSourceDirectory>src/it/groovy</testSourceDirectory>
         </configuration>
       </plugin>

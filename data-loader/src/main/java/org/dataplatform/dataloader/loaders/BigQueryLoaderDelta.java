@@ -69,7 +69,7 @@ public class BigQueryLoaderDelta implements BigQueryLoader {
   private String primaryKeys(DatasourceSchema datasourceSchema) {
     return datasourceSchema.getColumns().stream()
         .filter(Column::isPrimaryKey)
-        .map(column -> "src." + column.getName() + " = dest." + column.getName())
+        .map(column -> castIfNecessary(column, "src") + " = dest." + column.getName())
         .collect(Collectors.joining(" AND "));
   }
 
@@ -82,11 +82,7 @@ public class BigQueryLoaderDelta implements BigQueryLoader {
     String values =
         datasourceSchema.getColumns().stream()
                 .map(column -> {
-                  if (column.columnWithDateConversion()) {
-                    return String
-                        .format("PARSE_DATE(\"%s\", %s)", column.getPattern(), column.getName());
-                  }
-                  return column.getName();
+                  return castIfNecessary(column, "");
                 })
                 .collect(Collectors.joining(", "))
             + ", CURRENT_DATETIME()";
@@ -97,7 +93,19 @@ public class BigQueryLoaderDelta implements BigQueryLoader {
   private String updateClause(DatasourceSchema datasourceSchema) {
     return datasourceSchema.getColumns().stream()
         .filter(column -> !column.isPrimaryKey())
-        .map(column -> column.getName() + " = src." + column.getName())
+        .map(column -> column.getName() + " = " + castIfNecessary(column, "src"))
         .collect(Collectors.joining(", "));
+  }
+
+  private String castIfNecessary(Column column, String optionalTable) {
+    String prefix = "";
+    if (optionalTable != null && !optionalTable.trim().equals("")) {
+      prefix = optionalTable + ".";
+    }
+    if (column.columnWithDateConversion()) {
+      return String
+          .format("PARSE_DATE(\"%s\", %s)", column.getPattern(), prefix + column.getName());
+    }
+    return prefix + column.getName();
   }
 }

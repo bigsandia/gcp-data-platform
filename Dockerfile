@@ -6,9 +6,13 @@ COPY pom.xml .
 COPY . ./
 
 ARG module
+ARG it_test_sa_json
+
+RUN echo $it_test_sa_json > /app/it_test_sa.json
+ENV GOOGLE_APPLICATION_CREDENTIALS=/app/it_test_sa.json
 
 # Build a release artifact.
-RUN mvn package -DskipTests -pl commons,$module
+RUN mvn verify -pl commons,$module
 
 # Use AdoptOpenJDK for base image.
 # It's important to use OpenJDK 8u191 or above that has container support enabled.

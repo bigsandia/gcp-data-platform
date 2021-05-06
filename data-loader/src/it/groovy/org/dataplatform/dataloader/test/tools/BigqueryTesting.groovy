@@ -2,12 +2,15 @@ package org.dataplatform.dataloader.test.tools
 
 import com.google.cloud.bigquery.BigQuery
 import com.google.cloud.bigquery.BigQueryOptions
+import com.google.cloud.bigquery.Dataset
+import com.google.cloud.bigquery.DatasetInfo
 import com.google.cloud.bigquery.QueryJobConfiguration
 import com.google.cloud.bigquery.TableId
 
 trait BigqueryTesting {
 
     private BigQuery bigQuery = BigQueryOptions.newBuilder()
+            .setLocation("EU")
             .build().getService()
 
     def getResult(query) {
@@ -25,4 +28,13 @@ trait BigqueryTesting {
         bigQuery.delete(table)
     }
 
+    def createDatasetIfNoExists(String datasetName) {
+        def datasetInfo = DatasetInfo.newBuilder(datasetName).setLocation("EU").build()
+        def dataset = bigQuery.getDataset(datasetName)
+        if (dataset == null || !dataset.exists()) {
+            bigQuery.create(datasetInfo)
+            print("dataset created")
+        } else
+            print("dataset not created")
+    }
 }
