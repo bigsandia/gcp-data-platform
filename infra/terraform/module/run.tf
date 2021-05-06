@@ -24,7 +24,7 @@ resource "google_cloud_run_service" "data_loader" {
         }
       }
 
-      container_concurrency = 1
+      container_concurrency = 50
       service_account_name = google_service_account.data_loader.email
     }
   }

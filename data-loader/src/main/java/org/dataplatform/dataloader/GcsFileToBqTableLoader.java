@@ -10,11 +10,15 @@ import com.google.cloud.bigquery.LoadJobConfiguration.Builder;
 import com.google.cloud.bigquery.Schema;
 import com.google.cloud.bigquery.TableId;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dataplatform.dataloader.loaders.DatasourceToField;
 import org.dataplatform.dataloader.model.DatasourceSchema;
 import org.dataplatform.gcp.bigquery.BigQueryRepository;
 
 public class GcsFileToBqTableLoader {
+
+  private static final Logger LOGGER = LogManager.getLogger(GcsFileToBqTableLoader.class);
 
   private final BigQueryRepository bqRepo;
   private final String gcsFileName;
@@ -30,6 +34,7 @@ public class GcsFileToBqTableLoader {
   public void load() {
     LoadJobConfiguration loadJobConfiguration = createLoadJobConfiguration();
     bqRepo.runJob(loadJobConfiguration, "data-loader");
+    LOGGER.info("Successfully create table {}", loadJobConfiguration.getDestinationTable());
   }
 
   private LoadJobConfiguration createLoadJobConfiguration() {

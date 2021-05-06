@@ -1,6 +1,9 @@
 package org.dataplatform.dataloader.loaders;
 
-import com.google.cloud.bigquery.LoadJobConfiguration;
+import com.google.cloud.bigquery.JobInfo.WriteDisposition;
+import com.google.cloud.bigquery.QueryJobConfiguration;
+import java.util.stream.Collectors;
+import org.dataplatform.dataloader.GcsFileToBqTableLoader;
 import org.dataplatform.dataloader.model.DatasourceSchema;
 import org.dataplatform.gcp.bigquery.BigQueryRepository;
 
@@ -16,20 +19,35 @@ public class BigQueryLoaderFull implements BigQueryLoader {
   public void load(String filename, DatasourceSchema datasourceSchema)
       throws BigQueryLoaderException {
     try {
-      LoadJobConfiguration loadJobConfiguration =
-          LoadFromGcsJobBuilder.createLoadJobFromSchema(datasourceSchema)
-              .withDestinationTable(datasourceSchema.getTableId())
-              .withSourceUri(filename)
-              .build();
+      // 1- charger dans une table temporaire
+      GcsFileToBqTableLoader gcsFileToBqTableLoader = new GcsFileToBqTableLoader(
+          bigQueryRepository, filename, datasourceSchema);
+      gcsFileToBqTableLoader.load();
 
-      bigQueryRepository.runJob(loadJobConfiguration, "data-loader-full-ingestion");
-      bigQueryRepository.runDDLQuery(
-          String.format(
-              "UPDATE %s SET load_date_time = CURRENT_DATETIME() WHERE 1=1",
-              datasourceSchema.getFullTableName()));
+      // 2 - insérer dans la table finale (transformation des colonnes + ajout load_date_time)
+      QueryJobConfiguration jobConfig = QueryJobConfiguration
+          .newBuilder("SELECT " + selectClauseWithTransformedColumns(datasourceSchema) +
+              ", CURRENT_DATETIME() as load_date_time"
+              + " FROM " + datasourceSchema.getFullTableTmpName())
+          .setWriteDisposition(WriteDisposition.WRITE_TRUNCATE)
+          .setDestinationTable(datasourceSchema.getTableId())
+          .build();
+      bigQueryRepository.runJob(jobConfig, "data-loader");
     } catch (Exception e) {
       throw new BigQueryLoaderException(
           "Cannot load file " + filename + " into " + datasourceSchema.getFullTableName(), e);
     }
+  }
+
+  private String selectClauseWithTransformedColumns(DatasourceSchema datasourceSchema) {
+    return
+        datasourceSchema.getColumns().stream()
+            .map(column -> {
+              if (column.columnWithDateConversion()) {
+                return String.format("PARSE_DATE(\"%s\", %s) AS %s", column.getPattern(), column.getName(), column.getName());
+              }
+              return column.getName();
+            })
+            .collect(Collectors.joining(", "));
   }
 }

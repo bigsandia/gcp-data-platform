@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.Map;
 import org.dataplatform.dataloader.model.DatasourceSchema;
 
 public class JsonParser {
@@ -17,6 +18,14 @@ public class JsonParser {
   public static DatasourceSchema parseDatasourceSchema(byte[] jsonAsString) {
     try {
       return OBJECT_MAPPER.readValue(jsonAsString, DatasourceSchema.class);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  public static Map<String, Object> parseAsMap(String jsonAsString) {
+    try {
+      return OBJECT_MAPPER.readValue(jsonAsString, Map.class);
     } catch (IOException e) {
       throw new UncheckedIOException(e);
     }

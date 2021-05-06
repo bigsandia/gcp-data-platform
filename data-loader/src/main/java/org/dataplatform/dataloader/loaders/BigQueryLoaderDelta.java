@@ -1,10 +1,9 @@
 package org.dataplatform.dataloader.loaders;
 
-import com.google.cloud.bigquery.LoadJobConfiguration;
-import com.google.cloud.bigquery.TableId;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.dataplatform.dataloader.GcsFileToBqTableLoader;
 import org.dataplatform.dataloader.model.Column;
 import org.dataplatform.dataloader.model.DatasourceSchema;
 import org.dataplatform.gcp.bigquery.BigQueryRepository;
@@ -27,13 +26,10 @@ public class BigQueryLoaderDelta implements BigQueryLoader {
       LOGGER.info("Table not exists start a full loading");
       new BigQueryLoaderFull(bigQueryRepository).load(filepath, datasourceSchema);
     } else {
-      TableId temporaryTable = datasourceSchema.getTmpTableId();
-      LoadJobConfiguration loadJobConfiguration =
-          LoadFromGcsJobBuilder.createLoadJobFromSchema(datasourceSchema)
-              .withDestinationTable(temporaryTable)
-              .withSourceUri(filepath)
-              .build();
-      bigQueryRepository.runJob(loadJobConfiguration, "data-loader-delta-ingestion");
+      // 1- charger dans une table temporaire
+      GcsFileToBqTableLoader gcsFileToBqTableLoader = new GcsFileToBqTableLoader(
+          bigQueryRepository, filepath, datasourceSchema);
+      gcsFileToBqTableLoader.load();
 
       String query =
           "MERGE\n"
@@ -74,7 +70,7 @@ public class BigQueryLoaderDelta implements BigQueryLoader {
     return datasourceSchema.getColumns().stream()
         .filter(Column::isPrimaryKey)
         .map(column -> "src." + column.getName() + " = dest." + column.getName())
-        .collect(Collectors.joining(", "));
+        .collect(Collectors.joining(" AND "));
   }
 
   private String insertClause(DatasourceSchema datasourceSchema) {
@@ -85,7 +81,13 @@ public class BigQueryLoaderDelta implements BigQueryLoader {
             + ", load_date_time";
     String values =
         datasourceSchema.getColumns().stream()
-                .map(Column::getName)
+                .map(column -> {
+                  if (column.columnWithDateConversion()) {
+                    return String
+                        .format("PARSE_DATE(\"%s\", %s)", column.getPattern(), column.getName());
+                  }
+                  return column.getName();
+                })
                 .collect(Collectors.joining(", "))
             + ", CURRENT_DATETIME()";
 

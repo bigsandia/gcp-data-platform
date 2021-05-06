@@ -20,6 +20,8 @@ resource "google_pubsub_subscription" "data_loader_push" {
     }
   }
 
+  ack_deadline_seconds = 600
+
   dead_letter_policy {
     dead_letter_topic = google_pubsub_topic.data_loader_dead_letter.id
     max_delivery_attempts = 5
