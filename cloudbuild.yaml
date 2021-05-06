@@ -1,7 +1,14 @@
 substitutions:
   _PROJECT: another-data-platform
+  _CI_PROJECT: another-data-platform
 
 steps:
+
+  - name: maven:3.6-jdk-11
+    env:
+      - 'GOOGLE_CLOUD_PROJECT=${_CI_PROJECT}'
+    entrypoint: 'mvn'
+    args: ['verify', '-pl', 'commons,data-loader']
 
   - name: gcr.io/cloud-builders/docker
     args: [ 'build', '-t', 'eu.gcr.io/${_PROJECT}/run/data-loader:$SHORT_SHA', '--build-arg', 'module=data-loader', '.' ]

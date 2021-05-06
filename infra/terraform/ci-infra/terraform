@@ -1,0 +1,25 @@
+#!/usr/bin/env sh
+
+APP_DEFAULT_CREDENTIALS_JSON=$HOME/.config/gcloud/application_default_credentials.json
+
+DEPLOY_PROJECT=another-data-platform
+
+echo "running terraform on projet $DEPLOY_PROJECT"
+
+TERRAFORM_CMD="docker run -it --rm \
+	-v `pwd`:/root/terraform \
+	--hostname=`hostname` \
+	-v  $APP_DEFAULT_CREDENTIALS_JSON:/root/.config/gcloud/application_default_credentials.json \
+	-w /root/terraform \
+	hashicorp/terraform:0.14.6"
+
+case $1 in
+  init)
+    eval "$TERRAFORM_CMD" init
+    exit
+    ;;
+  *)
+    eval "$TERRAFORM_CMD" "$@"
+    exit
+    ;;
+esac
