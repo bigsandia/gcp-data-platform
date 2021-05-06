@@ -22,6 +22,8 @@ public class Application {
         "/",
         (req, res) -> {
           String filename = "";
+          ThreadContext.put("fileName", filename);
+
           try {
             LOGGER.info("Receiving event from bucket Req body={}", req.body());
             Notification notification = InputMessageConverter.extractNotificationMessage(req.body());
@@ -29,6 +31,7 @@ public class Application {
 
             filename =
                 String.format("gs://%s/%s", notification.get("bucket"), notification.get("name"));
+            ThreadContext.put("fileName", filename);
 
             DataLoaderConfig config = DataLoaderConfig.fromMap(System.getenv());
             GCSDatasourceSchemasRetriever datasourceSchemasRetriever =
@@ -38,6 +41,8 @@ public class Application {
             dataLoader.load(filename);
           } catch (Throwable t) {
             LOGGER.error("Error when loading file " + filename, t);
+          } finally {
+            ThreadContext.remove("fileName");
           }
           return "OK";
         });
@@ -45,8 +50,9 @@ public class Application {
     post(
         "/manual",
         (req, res) -> {
-          LOGGER.info("-----------------test ");
           String filename = "";
+          ThreadContext.put("fileName", filename);
+
           try {
             LOGGER.info("Receiving manual event from Req body={}", req.body());
             filename = req.body();
@@ -60,7 +66,9 @@ public class Application {
 
             dataLoader.load(filename);
           } catch (Throwable t) {
-            LOGGER.error("Error when loading file " + filename, t);
+            LOGGER.error("Error when loading file " + filename + " : " + t.getMessage(), t);
+          } finally {
+            ThreadContext.remove("fileName");
           }
           return "OK";
         });

@@ -1,7 +1,6 @@
 {
-  "rawPath": ".*delta/.*\\.csv",
-  "project": "another-data-platform",
-  "dataset": "test",
+  "rawPath": ".*delta-basic/.*\\.csv",
+  "dataset": "test_it",
   "table": "delta",
   "leadingRows": 1,
   "delimiter": ",",

@@ -1,0 +1,26 @@
+{
+  "rawPath": ".*delta-date-with-pattern-as-pk/.*\\.csv",
+  "dataset": "test_it",
+  "table": "delta_date_with_pattern_as_pk",
+  "leadingRows": 1,
+  "delimiter": ",",
+  "charset": "UTF-8",
+  "ingestionType": "DELTA",
+  "columns": [
+    {
+      "name": "id_date",
+      "type": "DATE",
+      "pattern": "%d/%m/%Y",
+      "primaryKey": true
+    },
+    {
+      "name": "product_id",
+      "type": "STRING",
+      "primaryKey": true
+    },
+    {
+      "name": "quantity",
+      "type": "INTEGER"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "rawPath": ".*delta-basic-date-as-pk/.*\\.csv",
+  "dataset": "test_it",
+  "table": "delta_basic_date_as_pk",
+  "leadingRows": 1,
+  "delimiter": ",",
+  "charset": "UTF-8",
+  "ingestionType": "DELTA",
+  "columns": [
+    {
+      "name": "id_date",
+      "type": "DATE",
+      "primaryKey": true
+    },
+    {
+      "name": "product_id",
+      "type": "STRING",
+      "primaryKey": true
+    },
+    {
+      "name": "quantity",
+      "type": "INTEGER"
+    }
+  ]
+}
